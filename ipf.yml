@@ -1,0 +1,43 @@
+---
+- name: Change IP and Hostname
+  hosts: new
+  become: yes
+    
+  vars_prompt:
+    - name: IP
+      prompt: Bitte IP-Adresse eingeben
+      private: false
+    
+    #- name: HN
+      #prompt: und hostname eingeben
+      #private: false
+  
+  tasks:
+
+    - name: Replace IP in Netplan configuration
+      ansible.builtin.replace:
+        path: /etc/netplan/00-installer-config.yaml  # Der tatsächliche Pfad zu Ihrer Netplan-Konfigurationsdatei
+        regexp: '(addresses:\s*-\s*)\d+\.\d+\.\d+\.\d+/24'
+        replace: '\g<1>{{ IP }}/24'
+      become: yes
+
+    #- name: Apply Netplan configuration
+      #ansible.builtin.command: netplan apply
+      #become: yes
+
+    #- name: Change Hostname
+      #ansible.builtin.hostname:
+        #name: "{{ HN }}"
+      # Replace new_hostname with the new hostname
+
+    #- name: Update /etc/hosts
+      #ansible.builtin.lineinfile:
+        #path: /etc/hosts
+        #line: "{{ IP }} {{ HN }}"
+      # Replace new_ip and new_hostname with the new values
+    
+    #- name: Restart networking service
+     # ansible.builtin.service:
+      ##  name: networking
+       # state: restarted
+     # become: yes
