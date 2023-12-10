@@ -1,0 +1,19 @@
+---
+- name: Kopiere SSH-Schlüssel auf Server
+  hosts: new
+  become: true  # Falls sudo-Berechtigungen benötigt werden
+
+  tasks:
+    - name: Stelle sicher, dass das Verzeichnis ~/.ssh existiert
+      file:
+        path: ~/.ssh
+        state: directory
+        owner: torsten
+        group: torsten
+        mode: '0700'
+
+    - name: Kopiere den öffentlichen SSH-Schlüssel zum Server
+      authorized_key:
+        user: torsten
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"  # Pfad zum öffentlichen Schlüssel auf deinem lokalen Rechner
+        state: present
